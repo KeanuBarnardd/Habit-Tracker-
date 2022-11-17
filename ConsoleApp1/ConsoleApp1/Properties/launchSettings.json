@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ConsoleApp1": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\keanu\\OneDrive\\Documents\\C# Projects\\HabitTracker\\ConsoleApp1\\ConsoleApp1"
+    }
+  }
+}
