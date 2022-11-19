@@ -4,14 +4,24 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.Runtime.CompilerServices;
 
+// Use this to create a connection to our SQLite server
 string connectionString = @"Data Source=habit-Tracker.db";
-using (var connection = new SqliteConnection(connectionString))
+
+static void CreateDatabase()
 {
-  connection.Open();
-  var tableCmd = connection.CreateCommand();
-  tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water ( Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Quantity INTEGER)";
-  tableCmd.ExecuteNonQuery();
-  connection.Close();
+  // Using is like a function that is used then deleted after its used.
+  // Create a new connection between our program & our Sqlite server so we can send/ get or create. 
+  using (var connection = new SqliteConnection(connectionString))
+  {
+    connection.Open();
+    // Create a SQL command to send
+    var tableCmd = connection.CreateCommand();
+    tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS drinking_water ( Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Quantity INTEGER)";
+    // This executes the tableCmd without asking the database to do anything.. so the database returns nothing. 
+    tableCmd.ExecuteNonQuery();
+    // Ends our connection and this using method will now be deleted.
+    connection.Close();
+  }
 }
 
 static void GetUserInput()
@@ -52,6 +62,17 @@ static void Insert()
 {
   string date = GetDateInput();
   int quantity = GetNumberInput("\n\nPlease insert number of glasses or other measure of your choice (no decimals allowed)\n\n");
+
+  using (var connection = new SqliteConnection(connectionString))
+  {
+    connection.Open();
+    var tableCmd = connection.CreateCommand();
+    // $ Allows us to add variables. Use singele quotes to convert to string. 
+    tableCmd.CommandText = $"INSERT INTO drinking_water(date,quantity) VALUES('{date}', {quantity})";
+    tableCmd.ExecuteNonQuery();
+
+    connection.Close();
+  }
 }
 
 static string GetDateInput()
@@ -73,4 +94,5 @@ static int GetNumberInput(string message)
   return finalInput;
 }
 
+CreateDatabase();
 GetUserInput();
